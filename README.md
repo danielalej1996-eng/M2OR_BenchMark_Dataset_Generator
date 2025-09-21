@@ -125,21 +125,3 @@ Edit these functions in `dataframe_utils.py` to change clustering behavior (e.g.
 These functions control how clusters are formed using `th_c` and `th_r`, and how samples are assigned to the cold splits.
 
 ---
-
-## Data files
-
-* `M2OR/main_receptors.csv`, `M2OR/main_compounds.csv`, `M2OR/pairs.csv`
-
-  * Delimiter: `;`
-  * Index column: `id`
-
----
-
-## Notes
-
-* Ensure `pair_id` values in `pairs.csv` are consistent with receptor and compound IDs in the base tables.
-* When `Mutations=True`, decide how mutant entries are grouped and split downstream.
-
----
-
-> *Tip:* If you expose the class as a package, consider adding docstrings and type hints (already shown above) and publishing API docs with Sphinx or MkDocs.
