@@ -6,7 +6,7 @@ import DSR
 
 
 
-def Benchmark_generator_ORF(Imb_lvl=3, th=0.6, LOG=False, Mutations = False, Sim_matrix_r = 'ALL_625.npy' ):
+def Benchmark_generator_ORF(Imb_lvl=3, th_c=0.6, th_r=0.6, LOG=False, Mutations = False, Sim_matrix_r = 'ALL_625.npy' ):
     
     import dataframe_utils as dfu
     
@@ -205,12 +205,12 @@ def Benchmark_generator_ORF(Imb_lvl=3, th=0.6, LOG=False, Mutations = False, Sim
     print('xxxxxxxxxxxxxxx')
   
     
-    splits_by_cluster_receptors,List_R_c = dfu.clustering_and_split_receptors(List_R,th, Sim_matrix_r)
+    splits_by_cluster_receptors,List_R_c = dfu.clustering_and_split_receptors(List_R,th_r, Sim_matrix_r)
     
     
     if LOG:print("splits_by_cluster_receptors")
     
-    splits_by_cluster_compound,List_L_c = dfu.clustering_and_split_compounds(M2OR_compounds,List_L,th)
+    splits_by_cluster_compound,List_L_c = dfu.clustering_and_split_compounds(M2OR_compounds,List_L,th_c)
     
     print('xxxxxxxxxxxxxxxx')
     if LOG:print("splits_by_cluster_compound")

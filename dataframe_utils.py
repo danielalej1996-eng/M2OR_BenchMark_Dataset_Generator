@@ -217,36 +217,48 @@ def get_size_df(Distibution, flex):
         
    return TG_DS
 
-def move_element(split_arrays, source_idx, dest_idx):
+
+
+def move_element(split_arrays, source_idx, dest_idx, seed=None):
     """
     Move a random element from split_arrays[source_idx] to split_arrays[dest_idx].
-    split_arrays: list of numpy arrays or pandas Series
-    source_idx: index of the fold to take from (the “high” one)
-    dest_idx:   index of the fold to give to  (the “low” one)
-    Returns the updated list of folds.
+
+    Args:
+        split_arrays: list of numpy arrays or pandas Series
+        source_idx: index of the fold to take from (the “high” one)
+        dest_idx:   index of the fold to give to  (the “low” one)
+        seed: optional int. If provided, selection is deterministic.
+
+    Returns:
+        The updated list of folds (same container types preserved).
     """
     src = split_arrays[source_idx]
     dst = split_arrays[dest_idx]
 
-    # turn each into a python list for easy remove/append
+    # Convert to lists for easy remove/append
     src_list = list(src)
     dst_list = list(dst)
 
-    # pick and move one element
-    element = random.choice(src_list)
+    if not src_list:
+        raise ValueError(f"Source fold {source_idx} is empty; cannot move an element.")
+
+    # Local RNG (doesn't affect global random state)
+    rng = random.Random(seed)
+    element = rng.choice(src_list)
+
+    # Move the chosen element
     src_list.remove(element)
     dst_list.append(element)
 
-    # put them back, preserving original type
-    if isinstance(src, pd.Series):
-        split_arrays[source_idx] = pd.Series(src_list, index=range(len(src_list)))
-    else:
-        split_arrays[source_idx] = np.array(src_list)
-
-    if isinstance(dst, pd.Series):
-        split_arrays[dest_idx] = pd.Series(dst_list, index=range(len(dst_list)))
-    else:
-        split_arrays[dest_idx] = np.array(dst_list)
+    # Put them back, preserving original type
+    split_arrays[source_idx] = (
+        pd.Series(src_list, index=range(len(src_list))) if isinstance(src, pd.Series)
+        else np.array(src_list, dtype=getattr(src, "dtype", None))
+    )
+    split_arrays[dest_idx] = (
+        pd.Series(dst_list, index=range(len(dst_list))) if isinstance(dst, pd.Series)
+        else np.array(dst_list, dtype=getattr(dst, "dtype", None))
+    )
 
     return split_arrays
 
@@ -308,7 +320,7 @@ def splits_folds(folds, List):
             break
         else:
             
-            split_arrays = move_element(split_arrays,H,L)
+            split_arrays = move_element(split_arrays,H,L,seed=1)
             
 
         
